@@ -20,8 +20,8 @@ Para a escolha do sensor de pressão deve-se levar em conta os limites estabelec
 ![Equação da incerteza do local do vazamento](https://latex.codecogs.com/gif.latex?\Delta&space;x&space;=&space;\frac{c}{2&space;f_{s}})
 
 Onde _c_ é velocidade do som da onda de pressão negativa de 343 m/s, _f<sub>s<sub>_ é a frequência de amostragem e _&Delta;x_ é incerteza do local do vazamento.
-  
-Assim, algumas possibilidades de sensores de pressão que suportem a faixa de pressão operacional e seu limite de sobrecarga são:
+
+Por exemplo, caso seja assumida uma incerteza de 1 cm, isso implica em uma frequência de 17150 Hz. Assim, algumas possibilidades de sensores de pressão que suportem a faixa de pressão operacional e o seu limite de sobrecarga são:
 
 | Sensor/Transdutor                    | [MIK-P300](http://www.meacon.cn/index.php?mod=show&mid=28&pid=52&id=10)  | [Marquardt 2066.2103](https://www.marquardt-shop.com/en/products/switches/sensors/2066/2066.2103.html) | [XDB304](https://portuguese.alibaba.com/product-detail/xdb304-g1-4-1-2mpa-174psi-5-12vdc-0-3m-cable-carbon-steel-alloy-environmental-protection-plating-air-compressor-pressure-sensor-1600057045056.html) | [HDP500](https://pt.aliexpress.com/item/4000315678180.html) |
 | :---:                                                       | :---:                                                | :---:           | :---:       | :---:       |
