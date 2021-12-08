@@ -21,7 +21,7 @@ Para a escolha do sensor de pressão deve-se levar em conta os limites estabelec
 
 Onde _c_ é velocidade do som da onda de pressão negativa de 343 m/s, _f<sub>s<sub>_ é a frequência de amostragem e _&Delta;x_ é incerteza do local do vazamento.
 
-Por exemplo, caso seja assumida uma incerteza de 1 cm, isso implica em uma frequência de 17150 Hz. Assim, algumas possibilidades de sensores de pressão que suportem a faixa de pressão operacional e o seu limite de sobrecarga são:
+Por exemplo, caso seja assumida uma incerteza de 50 cm, isso implica em uma frequência de 343 Hz. Assim, algumas possibilidades de sensores de pressão que suportem a faixa de pressão operacional e o seu limite de sobrecarga são:
 
 | Sensor/Transdutor                    | [MIK-P300](http://www.meacon.cn/index.php?mod=show&mid=28&pid=52&id=10)  | [Marquardt 2066.2103](https://www.marquardt-shop.com/en/products/switches/sensors/2066/2066.2103.html) | [XDB304](https://portuguese.alibaba.com/product-detail/xdb304-g1-4-1-2mpa-174psi-5-12vdc-0-3m-cable-carbon-steel-alloy-environmental-protection-plating-air-compressor-pressure-sensor-1600057045056.html) | [HDP500](https://pt.aliexpress.com/item/4000315678180.html) |
 | :---:                                                       | :---:                                                | :---:           | :---:       | :---:       |
@@ -29,9 +29,10 @@ Por exemplo, caso seja assumida uma incerteza de 1 cm, isso implica em uma frequ
 | Pressão de sobrecarga (% F.S.)                              | 200                                                  | > 200           | 150         | 150         |
 | Alimentação (Vdc)                                           | 12-36                                                | 5               | 5-12        | 9-36        |
 | Saída                                                       | 4-20mA (HART); 0-20mA (HART); 0-5Vdc; 1-5Vdc; 0-10Vdc; RS485 | 1,125-3,6Vdc    | 0,5-4,5Vdc; 0-5Vdc; 1-5Vdc | 4-20mA (HART) |
-| Precisão                                                    | 0,1 % F.S.                                           | 0,52 x pressão(bar) + 1,02 [V] (mínimo) e 0,58 x pressão(bar) + 1,23 [V] (máximo) | 1 % F.S. | 0,25 % F.S. |
+| Precisão                                                    | 0,1 % F.S. (0,6 kPa)                                 | 0,52 x pressão(bar) + 1,02 [V] (mínimo) e 0,58 x pressão(bar) + 1,23 [V] (máximo) | 1 % F.S. (5 kPa) | 0,25 % F.S. (1 kPa) |
 | Sensibilidade térmica (% F.S./Cº)                           | 0,03                                                 | N/A             | 0,03        | 0,03        |
 | Resposta de frequência (kHz)                                | 5 até 650                                            | N/A             | N/A         | 5 até 650   |
+| Tempo de resposta (ms)                                      | < 10                                                 | N/A             | <= 3        | <= 50       |
 | Temperatura de trabalho (Cº)                                | -40 até 85                                           | -10 até 70      | -20 até 85  | -20 até 70  |
 | Temperatura de armazenamento (Cº)                           | -40 até 125                                          | -40 até 90      | N/A         | -40 até 120 |
 | Conexão                                                     | G 1/4; G 1/2; 1/2 NPT; 1/4 NPT; M12 * 1,5; M20 * 1,5 | G 3/8           | G 1/4       | M20 * 1,5   |
