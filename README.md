@@ -37,6 +37,19 @@ Por exemplo, caso seja assumida uma incerteza de 50 cm, isso implica em uma freq
 | Temperatura de armazenamento (Cº)                           | -40 até 125                                          | -40 até 90      | N/A         | -40 até 120 |
 | Conexão                                                     | G 1/4; G 1/2; 1/2 NPT; 1/4 NPT; M12 * 1,5; M20 * 1,5 | G 3/8           | G 1/4       | M20 * 1,5   |
 
+E as especificações mínimas desejadas do sensor e do projeto são:
+
+| Especificações                                          | Desejadas                |
+| :-----------------------------------------------------: | :----------------------: |
+| Quantidade de sensores de pressão                       | 2                        |
+| Faixa de escala de pressão ou _Full Scale_ (F.S.) (MPa) | 0,4                      |
+| Pressão de sobrecarga (% F.S.)                          | 150                      |
+| Temperatura máxima de trabalho do sensor (ºC)           | 70                       |
+| Precisão do sensor                                      | 0,25 % F.S. (1 kPa)      |
+| Frequência de amostragem (Hz)                           | 250                      |
+| Tempo de resposta (ms)                                  | 4                        |
+| Faixa de erro esperado do local de vazamento (cm)       | 68,8                     |
+| Comprimento da tubulação (m)                            | 3                        |
 
 # Bibliografia
 [1] ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **NBR 5626: Sistemas prediais de água fria e água quente — 
