@@ -44,12 +44,12 @@ E as especificações mínimas desejadas do sensor e do projeto são:
 | Quantidade de sensores de pressão                       | 2                        |
 | Faixa de escala de pressão ou _Full Scale_ (F.S.) (MPa) | 0,4                      |
 | Pressão de sobrecarga (% F.S.)                          | 150                      |
-| Temperatura máxima de trabalho do sensor (ºC)           | 70                       |
-| Precisão do sensor                                      | 0,25 % F.S. (1 kPa)      |
-| Frequência de amostragem (Hz)                           | 250                      |
-| Tempo de resposta (ms)                                  | 4                        |
-| Faixa de erro esperado do local de vazamento (cm)       | 68,8                     |
-| Comprimento da tubulação (m)                            | 3                        |
+| Temperatura máxima de trabalho do sensor (ºC)           | >= 70                    |
+| Precisão do sensor                                      | 1 % F.S. (4 kPa)         |
+| Frequência de amostragem (Hz)                           | 172                      |
+| Tempo de resposta (ms)                                  | <= 6                     |
+| Faixa de erro esperado do local de vazamento (m)        | 1                        |
+| Comprimento da tubulação (m)                            | 6                        |
 
 # Bibliografia
 [1] ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **NBR 5626: Sistemas prediais de água fria e água quente — 
