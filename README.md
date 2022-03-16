@@ -74,7 +74,7 @@ Resumidamente, o fluxo da realização do protótipo segue os seguintes passos:
                                                                
 ## Configuração dos ADCs da placa de desenvolvimento *Blue Pill*
                                       
-Faz-se as seguintes configurações para realizar aquisições de forma paralela entre os dois ADCs:
+Faz-se as seguintes configurações para realizar aquisições de forma paralela entre os dois ADCs para a faixa de 0 até 3,3 V:
                                                                
 ![Imagem da configuração do primeiro ADC](/imgs/adc1.png "Configuração ADC1")
 
@@ -82,7 +82,7 @@ Faz-se as seguintes configurações para realizar aquisições de forma paralela
 
 ![Imagem da configuração do *clock* do ADCs](/imgs/clock.png "Configuração do clock dos ADCs")
 
-Observa-se que o *clock* principal dos ADCs foi reduzido para 562,5 kHz, em que ele é ainda menor devido ao número de ciclos entre amostras de 239,5 ciclos + 14,5 ciclos de atraso inerente a estrutura do ADC [ST](#bibliografia). Isso resulta em aproximadamente 2,2 kHz de frequência de amostragem.
+Observa-se que o *clock* principal dos ADCs foi reduzido para 562,5 kHz, em que ele é ainda menor devido ao número de ciclos entre amostras de 239,5 ciclos + 14,5 ciclos de atraso inerente a estrutura do ADC [(ST, 2021)](#bibliografia). Isso resulta em aproximadamente 2,2 kHz de frequência de amostragem.
                                                                
 ### Código para inicialização dos ADCs
                                                                
@@ -132,7 +132,64 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 [...]
 ```
 São enviados os pacotes de dados por USB quando o *buffer* estiver preenchido até a metade enquanto os ADCs fazem os restantes das aquisições, e, o novamente quando o *buffer* estiver completamente cheio.
-                                                               
+
+### Exemplo em *hardware*
+
+Por meio de dois potênciometros alimentados pela própria placa são modificados os valores de entrada dos ADCs, como visto nas imagens abaixo:
+
+![Imagem da aquisição dos ADCs (exemplo 1)](/imgs/dados1.png "Aquisições ADCs (Exemplo 1)")
+
+![Imagem da aquisição dos ADCs (exemplo 2)](/imgs/dados2.png "Aquisições ADCs (Exemplo 2)")
+							    
+Nessas imagens o *software* [Realterm](https://sourceforge.net/projects/realterm/) recebeu pela comunicação USB as amostras dos ADCs. Denota-se que seus valores variam na faixa de 2-bits, e, portanto, serão considerados apenas os valores de 10-bits a partir do MSB.
+							     
+## Sensor
+
+O sensor escolhido para o projeto foi o MPS20N0040D-S [(RADIONICA, 20??)](#bibliografia), que possui as seguintes especificações:
+
+![Imagem do sensor de pressão](/imgs/sensor.png "Sensor de pressão")
+							       
+| Especificações                                          | MPS20N0040D-S            |
+| :-----------------------------------------------------: | :----------------------: |
+| Quantidade de sensores de pressão                       | 2                        |
+| Faixa de escala de pressão ou _Full Scale_ (F.S.) (MPa) | 0,04                     |
+| Pressão de sobrecarga (% F.S.)                          | 300                      |
+| Saída                                                   | 50 mV até 100 mV         |
+| Temperatura máxima de trabalho do sensor (ºC)           | -40 até 80               |
+| Precisão do sensor                                      | 0,25 % F.S. (0,1 kPa)    |
+
+Vê-se que a saída do sensor é de baixa tensão, logo, ele requer um circuito de amplificação antes de ser conectado a placa.
+							       
+### Circuito de amplificação
+							       
+O esquemático do circuito é disponibilizado a seguir:
+
+![Imagem do esquemático do circuito de amplificação](/imgs/circuito-amp.png "Esquemático do circuito de amplificação do sensor")
+
+Nele é realizado no primeiro estágio um ganho de 50 vezes do sinal (de 50 mV até 100 mV para 2,5 V até 5 V), já no segundo estágio é somado e amplificado negativamente com um sinal de referência de -2,5 V (2,5 V até 5 V para -2,5 V até 0 V) e no último estágio é amplificado por -2 (-2,5 V até 0 V para 0 V até 5 V). Seu valor de saída de 0 até 5 V pode ser facilmente reduzido para 0 V até 3,3 V (faixa de tensão dos ADCs) por meio de um divisor resistivo.
+							       
+### Protótipo do circuito de amplificação
+							       
+Nas imagens abaixo está o circuito de amplificação montado em bancada:
+							       
+![Imagem do circuito de amplificação em bancada](/imgs/bancada.jpg "Circuito de amplificação do sensor em bancada")
+
+![Imagem da alimentação](/imgs/alimentacao.jpg "Alimentação do circuito de amplificação do sensor em bancada")
+
+Para simular o comportamento do sensor de pressão foi montada também a ponte H, nela foram trocados valores de resistência para alterar a tensão de comparação.
+							     
+Para o valor de resistência de 33,9 k: 
+![Imagem do circuito de amplificação em bancada com valor de resistência de 33,9 k](/imgs/55m.jpg "Circuito de amplificação do sensor em bancada para 33,9 k")
+
+Para o valor de resistência de 34,3 k: 
+![Imagem do circuito de amplificação em bancada com valor de resistência de 34,3 k](/imgs/65m.jpg "Circuito de amplificação do sensor em bancada para 34,3 k")
+
+Para o valor de resistência de 35,11 k: 
+![Imagem do circuito de amplificação em bancada com valor de resistência de 35,11 k](/imgs/85m.jpg "Circuito de amplificação do sensor em bancada para 35,11 k")
+
+Para o valor de resistência de 36 k: 
+![Imagem do circuito de amplificação em bancada com valor de resistência de 36 k](/imgs/95m.jpg "Circuito de amplificação do sensor em bancada para 36 k")
+							       		       
 ## Resolução de problemas
 Infelizmente, devido a pandemia e múltiplos fatores que afetaram a indústria tecnológica, a escassez de *chips* se tornou algo comum, dando espaço para
 dispositivos alternativos e clones de microcontroladores. Nisso, certas funcionalidades como as de depuração e gravação podem não ser suportadas 
@@ -211,3 +268,5 @@ Projeto, execução, operação e manutenção**. Rio de Janeiro. 2020. Disponí
 [3] HINDERDAEL, M. F.; DE BAERE, D.; GUILLAUME, P.. Proof of Concept of Crack Localization Using Negative Pressure Waves in Closed Tubes for Later Application in Effective SHM System for Additive Manufactured Components. **Applied Sciences**, v. 6, n. 2, p. 33, 1 fev. 2016. Disponível em: <https://www.mdpi.com/2076-3417/6/2/33>.
   
 [4] ST. **RM008* Reference manual**. 2021. Disponível em: <https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf>
+	
+[5] RADIONICA. **Pressure Sensor MPS20N0040D-S**. 20??. Disponível em: <https://softroboticstoolkit.com/files/sorotoolkit/files/mps20n0040d-s_datasheet.pdf>
