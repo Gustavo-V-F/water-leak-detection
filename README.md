@@ -71,7 +71,68 @@ Resumidamente, o fluxo da realização do protótipo segue os seguintes passos:
 2. Desenvolvimento do código necessário para a aquisição e transmissão das amostras;
 3. Gravação pelo uso da ferramenta [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html);
 4. E depuração de *hardware* utilizando servidores do *GNU Project Debugger* (GDB) customizados pela STMicroelectronics ou implementados pelo [OpenOCD](https://openocd.org/).
+                                                               
+## Configuração dos ADCs da placa de desenvolvimento *Blue Pill*
+                                      
+Faz-se as seguintes configurações para realizar aquisições de forma paralela entre os dois ADCs:
+                                                               
+![Imagem da configuração do primeiro ADC](/imgs/adc1.png "Configuração ADC1")
 
+![Imagem da configuração do segundo ADC](/imgs/adc2.png "Configuração ADC2")
+
+![Imagem da configuração do *clock* do ADCs](/imgs/clock.png "Configuração do clock dos ADCs")
+
+Observa-se que o *clock* principal dos ADCs foi reduzido para 562,5 kHz, em que ele é ainda menor devido ao número de ciclos entre amostras de 239,5 ciclos + 14,5 ciclos de atraso inerente a estrutura do ADC [ST](#bibliografia). Isso resulta em aproximadamente 2,2 kHz de frequência de amostragem.
+                                                               
+### Código para inicialização dos ADCs
+                                                               
+As inicialização dos ADCs é diretamente no arquivo `main.c`, onde os trechos relevantes são apresentados abaixo:
+                                                               
+```C
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+#define ADC_BUFFER_SIZE 256
+#define ADC_HALF_BUFFER_SIZE_IN_BYTES 2*ADC_BUFFER_SIZE
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+uint32_t adc_buf[ADC_BUFFER_SIZE];
+/* USER CODE END PV */
+[...]
+int main(void)
+{
+  [...]
+  MX_ADC1_Init();
+  MX_ADC2_Init();
+  /* USER CODE BEGIN 2 */
+  HAL_ADC_Start(&hadc2);
+  HAL_ADCEx_MultiModeStart_DMA(&hadc1, adc_buf, ADC_BUFFER_SIZE);
+  [...]
+```
+
+Nota-se que todos os dados são escritos em um único *buffer*, nisso a componente DMA do microcontrolador automaticamente preenche-o com as aquisições. Além disso também permite adicionar funcionalidades em diferentes momentos de escrita dos dados por meio de suas funções de *callback*, onde são modificadas no trecho de código abaixo:
+                                                               
+```C
+[...]
+/* USER CODE BEGIN 4 */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc){
+	CDC_Transmit_FS((uint8_t*)adc_buf, ADC_HALF_BUFFER_SIZE_IN_BYTES);
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
+	CDC_Transmit_FS((uint8_t*)adc_buf + ADC_HALF_BUFFER_SIZE_IN_BYTES, ADC_HALF_BUFFER_SIZE_IN_BYTES);
+}
+[...]
+```
+São enviados os pacotes de dados por USB quando o *buffer* estiver preenchido até a metade enquanto os ADCs fazem os restantes das aquisições, e, o novamente quando o *buffer* estiver completamente cheio.
+                                                               
 ## Resolução de problemas
 Infelizmente, devido a pandemia e múltiplos fatores que afetaram a indústria tecnológica, a escassez de *chips* se tornou algo comum, dando espaço para
 dispositivos alternativos e clones de microcontroladores. Nisso, certas funcionalidades como as de depuração e gravação podem não ser suportadas 
@@ -148,3 +209,5 @@ Projeto, execução, operação e manutenção**. Rio de Janeiro. 2020. Disponí
 [2] LI, J. et al. **A novel location algorithm for pipeline leakage based on the attenuation of negative pressure wave**. Process Safety and Environmental Protection, v. 123, p. 309–316, 2019. ISSN 0957-5820. Disponível em: <https://www.sciencedirect.com/science/article/pii/S0957582019300813>.
 
 [3] HINDERDAEL, M. F.; DE BAERE, D.; GUILLAUME, P.. Proof of Concept of Crack Localization Using Negative Pressure Waves in Closed Tubes for Later Application in Effective SHM System for Additive Manufactured Components. **Applied Sciences**, v. 6, n. 2, p. 33, 1 fev. 2016. Disponível em: <https://www.mdpi.com/2076-3417/6/2/33>.
+  
+[4] ST. **RM008* Reference manual**. 2021. Disponível em: <https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf>
