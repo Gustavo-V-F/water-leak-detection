@@ -131,7 +131,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 }
 [...]
 ```
-São enviados os pacotes de dados por USB quando o *buffer* estiver preenchido até a metade enquanto os ADCs fazem os restantes das aquisições, e, o novamente quando o *buffer* estiver completamente cheio.
+São enviados os pacotes de dados por USB quando o *buffer* estiver preenchido até a metade enquanto os ADCs fazem os restantes das aquisições, e, novamente quando o *buffer* estiver completamente cheio.
 
 ### Exemplo em *hardware*
 
@@ -176,9 +176,9 @@ Nas imagens abaixo está o circuito de amplificação montado em bancada:
 
 ![Imagem da alimentação](/imgs/alimentacao.jpg "Alimentação do circuito de amplificação do sensor em bancada")
 
-Para simular o comportamento do sensor de pressão foi montada também a ponte H, nela foram trocados valores de resistência para alterar a tensão de comparação.
-							     
-Para o valor de resistência de 33,9 k: 
+Para simular o comportamento do sensor de pressão foi montada também a ponte H, nela foram trocados valores de resistência para alterar a tensão de comparação. Na sequência de imagens abaixo, estão dispostos 5 multímetros, no topo está a medida de tensão da saída da ponte H, e da direita para a esquerda estão, respectivamente, as medidas de tensão de referência de 2,5 V provida pelo TL413 amplificada por -1 pelo TL072, a tensão amplificada pelo amplificador de instrumentação INA118, a adição das tensões anteriores amplificada por -1 e a saída de 0 V até 5 V na última medida do multímetro.
+
+Para o valor de resistência de 33,9 k:
 ![Imagem do circuito de amplificação em bancada com valor de resistência de 33,9 k](/imgs/55m.jpg "Circuito de amplificação do sensor em bancada para 33,9 k")
 
 Para o valor de resistência de 34,3 k: 
@@ -267,6 +267,6 @@ Projeto, execução, operação e manutenção**. Rio de Janeiro. 2020. Disponí
 
 [3] HINDERDAEL, M. F.; DE BAERE, D.; GUILLAUME, P.. Proof of Concept of Crack Localization Using Negative Pressure Waves in Closed Tubes for Later Application in Effective SHM System for Additive Manufactured Components. **Applied Sciences**, v. 6, n. 2, p. 33, 1 fev. 2016. Disponível em: <https://www.mdpi.com/2076-3417/6/2/33>.
   
-[4] ST. **RM008* Reference manual**. 2021. Disponível em: <https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf>
+[4] ST. **RM008 Reference manual**. 2021. Disponível em: <https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf>
 	
 [5] RADIONICA. **Pressure Sensor MPS20N0040D-S**. 20??. Disponível em: <https://softroboticstoolkit.com/files/sorotoolkit/files/mps20n0040d-s_datasheet.pdf>
