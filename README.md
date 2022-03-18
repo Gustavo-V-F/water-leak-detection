@@ -154,6 +154,7 @@ O sensor escolhido para o projeto foi o MPS20N0040D-S [(RADIONICA, 20??)](#bibli
 | Quantidade de sensores de pressão                       | 2                        |
 | Faixa de escala de pressão ou _Full Scale_ (F.S.) (MPa) | 0,04                     |
 | Pressão de sobrecarga (% F.S.)                          | 300                      |
+| Tensão de bias                                          | +-25 mV                  |
 | Saída                                                   | 50 mV até 100 mV         |
 | Temperatura máxima de trabalho do sensor (ºC)           | -40 até 80               |
 | Precisão do sensor                                      | 0,25 % F.S. (0,1 kPa)    |
@@ -189,7 +190,101 @@ Para o valor de resistência de 35,11 k:
 
 Para o valor de resistência de 36 k: 
 ![Imagem do circuito de amplificação em bancada com valor de resistência de 36 k](/imgs/95m.jpg "Circuito de amplificação do sensor em bancada para 36 k")
-							       		       
+	
+## Protótipo em bancada
+
+Para efeitos de teste, foi utilizado um cano de 3 metros de comprimento com vazamentos simulados por torneiras instaladas à 0,975 metros e 2,51 metros do sensor mais próximo da entrada de água. E os dois sensores são distanciados por 2,955 metros. O protótipo é apresentado abaixo:
+							       
+![Imagem do protótipo contruído para os testes](/imgs/prototipo.jpg "Protótipo em bancada")
+
+### Resultados 
+
+Foram realizados dois testes de 1 minuto cada ao todo, por meio do *script* python abaixo as aquisições recebidas por USB foram armazenadas em arquivos .csv.
+							       
+```Python
+import serial
+import csv
+
+csv_filename = 'pressure_sensor_data_raw' # Change to 'pressure_sensor_data_raw2' for second dataset
+header = ['t','sensor0', 'sensor1']
+sensor0 = [0, 0];
+sensor1 = [0, 0];
+total_time = 60;
+sample_freq = 562500/(239.5+14.5); # ADCs sampling frequency / (selected number of cycles + ADCs delay in cycles)
+sample_time = 1/sample_freq;
+sample_amount = int(round(total_time/sample_time));
+
+# NOTE the user must ensure that the serial port and baudrate are correct
+serPort = "/dev/ttyACM0";
+baudRate = 115200;
+ser = serial.Serial(serPort, baudRate);
+print("Serial port " + serPort + " open:  Baudrate " + str(baudRate));
+
+with open(csv_filename+'.csv', 'w', encoding='UTF8', newline='') as pressure_sensor_data:
+    data_write = csv.writer(pressure_sensor_data)
+    
+    # write the header
+    data_write.writerow(header)
+    
+    #print(str((((int.from_bytes(sensor0[1], "little") << 8) + int.from_bytes(sensor0[0], "little")) >> 2)) + ', ' 
+    #      + str((((int.from_bytes(sensor1[1], "little") << 8) + int.from_bytes(sensor1[0], "little")) >> 2)) + ';');
+    for i in range(0, sample_amount):
+        sensor0[0] = ser.read();
+        sensor0[1] = ser.read();
+        sensor1[0] = ser.read();
+        sensor1[1] = ser.read();
+        
+        # write the data
+        data_write.writerow([i*sample_time,
+                            str((((int.from_bytes(sensor0[1], "little") << 8) + int.from_bytes(sensor0[0], "little")) >> 2)),
+                            str((((int.from_bytes(sensor1[1], "little") << 8) + int.from_bytes(sensor1[0], "little")) >> 2))])
+    print('Finished writing to '+ csv_filename +'.csv');
+```
+
+No primeiro teste (`'python/pressure_sensor_data_raw.csv'`) teve de ser ajustado por potenciômetros de 10 kOhms as saídas do INA118 (ao invés de apenas resistores de 10 kOhms) para compensar a tensão de bias do sensor, os dados obtidos dos sensores resultaram nos dois gráficos a seguir:
+
+![Imagem do gráfico do primeiro teste](/imgs/plot_sensor_saturado.jpg "Gráfico do primeiro teste")
+
+Nele observa-se platôs devido a saturação do sinal amplificado para a entrada dos ADCs, eles causam discrepâncias no cálculo da distância do vazamento, logo não é possível obtê-los.
+	
+Já no segundo teste (`'python/pressure_sensor_data_raw2.csv'`) foi feito um ajuste para diminuir a sensibilidade do ganho de amplificação, assim esperava-se que os valores estivessem dentro da faixa de 0 V até 3,3 V da entrada dos ADCs. No entanto ainda nota-se saturação, mesmo que não tão intensa como no primeiro teste, como pode ser visto nos gráficos abaixo:
+	
+![Imagem do gráfico do segundo teste](/imgs/plot_sensor.jpg "Gráfico do segundo teste")
+
+Por inspeção visual vê-se que há uma queda brusca de pressão entre 3,0 e 3,4 segundos nos dois sensores, onde os símbolos **x** verdes representam pontos de máximo local, e os vermelhos, pontos de mínimo local. Nisso foi calculado o ponto de vazamento utilizando o *script* Python abaixo:
+	
+![Imagem do gráfico do primeiro vazamento](/imgs/plot_sensor_primeiro.jpg "Gráfico do primeiro vazamento")
+
+```Python
+def mean_time_delta(n2, n1, n4, n3):
+    return abs((n2-n1+n4-n3)/2);
+
+def leak_point(pipeline_length, time_delta, npw_speed=360.56, fluid_speed=1):
+    # From upstream
+    return (pipeline_length+time_delta*(npw_speed-fluid_speed))/2;
+    
+time0_max = np.asarray(t)[maxima0.astype(int)];
+time0_min = np.asarray(t)[minima0.astype(int)];
+
+time1_max = np.asarray(t)[maxima1.astype(int)];
+time1_min = np.asarray(t)[minima1.astype(int)];
+
+measured_length = 2.955;    
+
+time_delta2510 = mean_time_delta(time0_max[2], time1_max[3], time0_min[3], time1_min[4]);
+leak2510 = leak_point(measured_length, time_delta2510);
+
+print("Vazamento no ponto de 2,51 m:")
+print("Diferença de tempo média entre os dois sensores =", time_delta2510);
+print("Distância do vazamento calculada =", leak2510);
+```
+
+Disto teve-se um resultado de 2,41 metros, que representa um erro de 3,94 % comparado ao real de 2,51 metros. E para o segundo vazamento foi realizado o cálculo para a região entre 39,5 segundos e 40,5 segundos a partir da imagem abaixo.
+	
+![Imagem do gráfico do segundo vazamento](/imgs/plot_sensor_segundo.jpg "Gráfico do segundo vazamento")
+	
+O cálculo resulta em um valor de 11,58 metros, que é incompatível com o valor na realidade de 0,975 metros. Isso ocorre devido a saturação, a curva não coincide perfeitamente nos mesmos pontos, e portanto, não é válida.
+
 ## Resolução de problemas
 Infelizmente, devido a pandemia e múltiplos fatores que afetaram a indústria tecnológica, a escassez de *chips* se tornou algo comum, dando espaço para
 dispositivos alternativos e clones de microcontroladores. Nisso, certas funcionalidades como as de depuração e gravação podem não ser suportadas 
