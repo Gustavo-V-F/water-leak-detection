@@ -243,17 +243,17 @@ with open(csv_filename+'.csv', 'w', encoding='UTF8', newline='') as pressure_sen
 
 No primeiro teste (`'python/pressure_sensor_data_raw.csv'`) teve de ser ajustado por potenciômetros de 10 kOhms as saídas do INA118 (ao invés de apenas resistores de 10 kOhms) para compensar a tensão de bias do sensor, os dados obtidos dos sensores resultaram nos dois gráficos a seguir:
 
-![Imagem do gráfico do primeiro teste](/imgs/plot_sensor_saturado.jpg "Gráfico do primeiro teste")
+![Imagem do gráfico do primeiro teste](/imgs/plot_sensor_saturado.png "Gráfico do primeiro teste")
 
 Nele observa-se platôs devido a saturação do sinal amplificado para a entrada dos ADCs, eles causam discrepâncias no cálculo da distância do vazamento, logo não é possível obtê-los.
 	
 Já no segundo teste (`'python/pressure_sensor_data_raw2.csv'`) foi feito um ajuste para diminuir a sensibilidade do ganho de amplificação, assim esperava-se que os valores estivessem dentro da faixa de 0 V até 3,3 V da entrada dos ADCs. No entanto ainda nota-se saturação, mesmo que não tão intensa como no primeiro teste, como pode ser visto nos gráficos abaixo:
 	
-![Imagem do gráfico do segundo teste](/imgs/plot_sensor.jpg "Gráfico do segundo teste")
+![Imagem do gráfico do segundo teste](/imgs/plot_sensor.png "Gráfico do segundo teste")
 
 Por inspeção visual vê-se que há uma queda brusca de pressão entre 3,0 e 3,4 segundos nos dois sensores, onde os símbolos **x** verdes representam pontos de máximo local, e os vermelhos, pontos de mínimo local. Nisso foi calculado o ponto de vazamento utilizando o *script* Python abaixo:
 	
-![Imagem do gráfico do primeiro vazamento](/imgs/plot_sensor_primeiro.jpg "Gráfico do primeiro vazamento")
+![Imagem do gráfico do primeiro vazamento](/imgs/plot_sensor_primeiro.png "Gráfico do primeiro vazamento")
 
 ```Python
 def mean_time_delta(n2, n1, n4, n3):
@@ -281,7 +281,7 @@ print("Distância do vazamento calculada =", leak2510);
 
 Disto teve-se um resultado de 2,41 metros, que representa um erro de 3,94 % comparado ao real de 2,51 metros. E para o segundo vazamento foi realizado o cálculo para a região entre 39,5 segundos e 40,5 segundos a partir da imagem abaixo.
 	
-![Imagem do gráfico do segundo vazamento](/imgs/plot_sensor_segundo.jpg "Gráfico do segundo vazamento")
+![Imagem do gráfico do segundo vazamento](/imgs/plot_sensor_segundo.png "Gráfico do segundo vazamento")
 	
 O cálculo resulta em um valor de 11,58 metros, que é incompatível com o valor na realidade de 0,975 metros. Isso ocorre devido a saturação, a curva não coincide perfeitamente nos mesmos pontos, e portanto, não é válida.
 
