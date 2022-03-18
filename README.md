@@ -282,6 +282,15 @@ print("Distância do vazamento calculada =", leak2510);
 Disto teve-se um resultado de 2,41 metros, que representa um erro de 3,94 % comparado ao real de 2,51 metros. E para o segundo vazamento foi realizado o cálculo para a região entre 39,5 segundos e 40,5 segundos a partir da imagem abaixo.
 	
 ![Imagem do gráfico do segundo vazamento](/imgs/plot_sensor_segundo.png "Gráfico do segundo vazamento")
+
+```Python
+time_delta975 = mean_time_delta(time0_max[27], time1_max[15], time0_min[28], time1_min[17]);
+leak975 = leak_point(measured_length, time_delta975);
+
+print("Vazamento no ponto de 0,975 m:")
+print("Diferença de tempo média entre os dois sensores =", time_delta975);
+print("Distância do vazamento calculada =", leak975);
+```
 	
 O cálculo resulta em um valor de 11,58 metros, que é incompatível com o valor na realidade de 0,975 metros. Isso ocorre devido a saturação, a curva não coincide perfeitamente nos mesmos pontos, e portanto, não é válida.
 
